@@ -1,0 +1,6 @@
+{
+  "name": "SignQuest",
+  "description": "A camera-driven sign-language learning game with a winding journey map, real-time gesture recognition, and Gemini AI Sign Sensei.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

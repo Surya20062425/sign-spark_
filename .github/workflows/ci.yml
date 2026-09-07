@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Lint, Typecheck & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Typecheck & Code Validation
+        run: npm run lint
+
+      - name: Production Bundle & Compilation
+        run: npm run build
+
+      - name: Verify Build Artifacts
+        run: |
+          echo "Verifying build outputs..."
+          test -d dist || { echo "Error: dist directory missing"; exit 1; }
+          test -f dist/index.html || { echo "Error: dist/index.html missing"; exit 1; }
+          test -f dist/server.cjs || { echo "Error: dist/server.cjs missing"; exit 1; }
+          echo "All CI/CD verification checks passed successfully!"

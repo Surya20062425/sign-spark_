@@ -1,0 +1,40 @@
+name: CD Pipeline - Production Deployment Check
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy-check:
+    name: Build & Package Release Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Build Full Stack Application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Upload Production Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: signquest-production-dist
+          path: dist/
+          retention-days: 7
